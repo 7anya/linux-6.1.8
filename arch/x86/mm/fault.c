@@ -1506,7 +1506,8 @@ trace_page_fault_entries(struct pt_regs *regs, unsigned long error_code,
 static __always_inline void
 handle_page_fault(struct pt_regs *regs, unsigned long error_code,
 			      unsigned long address)
-{
+{	
+	printk("handle_page_fault at address:%ld\n",address);
 	trace_page_fault_entries(regs, error_code, address);
 
 	if (unlikely(kmmio_fault(regs, address)))

@@ -99,4 +99,12 @@ config BPF_LSM
 
 	  If you are unsure how to answer this question, answer N.
 
+config 3PO
+	bool "Enable all 3PO stuff"
+	help 
+		turn off everything Tanya implemented 
+		Calm the system down
+		YEYEYEYEYE
+		ok bye. 
+
 endmenu # "BPF subsystem"

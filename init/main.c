@@ -1416,12 +1416,12 @@ static void __init do_basic_setup(void)
 	do_ctors();
 	do_initcalls();
 	// Tanya's code
-	threePO_chan = relay_open("3PO chan", NULL, SUBBUF_SIZE,
-				  N_SUBBUFS, 1, NULL);
-	if (!threePO_chan)
-		printk("threePO_chan channel creation failed\n");
-	else
-		printk("threePO_chan channel ready\n");
+	// threePO_chan = relay_open("3PO chan", NULL, SUBBUF_SIZE,
+	// 			  N_SUBBUFS, 1, NULL);
+	// if (!threePO_chan)
+	// 	printk("threePO_chan channel creation failed\n");
+	// else
+	// 	printk("threePO_chan channel ready\n");
 	// Tanya's code
 }
 

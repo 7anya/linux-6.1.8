@@ -39,6 +39,7 @@
 #include <asm/trace/exceptions.h>
 
 //Tanya's functions begin
+#ifdef CONFIG_3PO
 extern struct rchan *threePO_chan;
 /**
  * @brief This function marks the 3PO bit in the page table entry
@@ -69,6 +70,7 @@ static inline int mark_3PO_bit(struct pt_regs *regs, unsigned long addr)
 	//printk(KERN_INFO "mark_3PO_bit: regs->r12 = %lx\n", regs->r12);
 	//printk(KERN_INFO "mark_3PO_bit: regs->r13 = %lx\n", regs->r13);
 	//printk(KERN_INFO "mark_3PO_bit: regs->r14 = %lx\n", regs->r14);
+	return 0;
 
 }
 
@@ -79,7 +81,7 @@ static inline int mark_3PO_bit(struct pt_regs *regs, unsigned long addr)
 static inline void mark_not_present(struct pt_regs *regs, unsigned long addr){
 	// printk(KERN_INFO "mark_not_present: addr = %lx\n", addr);
 
-	return 0;
+	return;
 }
 
 /**
@@ -105,7 +107,7 @@ static inline void on_page_fault(struct pt_regs *regs, unsigned long addr){
 //           // first access to p
 //           set 𝑝’s 3PO bit
 //           run normal page-fault handling
-    return 0;
+    return ;
 }
 
 /**
@@ -124,6 +126,7 @@ int log_page_fault(unsigned long address)
 	
 	return 0;
 }
+#endif
 //Tanya's functions end
 
 /*
@@ -1597,8 +1600,10 @@ handle_page_fault(struct pt_regs *regs, unsigned long error_code,
 			      unsigned long address)
 {	
 	// Tanya's code
+	#ifdef CONFIG_3PO
 	printk("handle_page_fault at address:%ld\n",address);
 	log_page_fault(address);
+	#endif
 	//Tanya's code 
 	trace_page_fault_entries(regs, error_code, address);
 

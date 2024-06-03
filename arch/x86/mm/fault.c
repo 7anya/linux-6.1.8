@@ -20,6 +20,7 @@
 #include <linux/efi.h>			/* efi_crash_gracefully_on_page_fault()*/
 #include <linux/mm_types.h>
 #include <linux/relay.h>        /*relay interface*/
+#include <linux/syscalls.h>
 
 #include <asm/cpufeature.h>		/* boot_cpu_has, ...		*/
 #include <asm/traps.h>			/* dotraplinkage, ...		*/
@@ -41,6 +42,7 @@
 //Tanya's functions begin
 #ifdef CONFIG_3PO
 extern struct rchan *threePO_chan;
+bool tracing=true;
 /**
  * @brief This function marks the 3PO bit in the page table entry
  * 
@@ -126,7 +128,29 @@ int log_page_fault(unsigned long address)
 	
 	return 0;
 }
+
 #endif
+SYSCALL_DEFINE1(three_start_tracing, char *, msg)
+{
+  char buf[256];
+  long copied = strncpy_from_user(buf, msg, sizeof(buf));
+  if (copied < 0 || copied == sizeof(buf))
+    return -EFAULT;
+  printk(KERN_INFO "stephen syscall called with \"%s\"\n", buf);
+  return 0;
+}
+
+SYSCALL_DEFINE1(three_stop_tracing, char *, msg)
+{
+  char buf[256];
+  long copied = strncpy_from_user(buf, msg, sizeof(buf));
+  if (copied < 0 || copied == sizeof(buf))
+    return -EFAULT;
+  printk(KERN_INFO "stephen syscall called with \"%s\"\n", buf);
+  return 0;
+}
+
+
 //Tanya's functions end
 
 /*

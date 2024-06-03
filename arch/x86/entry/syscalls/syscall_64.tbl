@@ -318,7 +318,7 @@
 307	64	sendmmsg		sys_sendmmsg
 308	common	setns			sys_setns
 309	common	getcpu			sys_getcpu
-310	64	process_vm_readv	sys_process_vm_readv
+310	64	process_vm_readv    sys_process_vm_readv
 311	64	process_vm_writev	sys_process_vm_writev
 312	common	kcmp			sys_kcmp
 313	common	finit_module		sys_finit_module
@@ -369,10 +369,13 @@
 445	common	landlock_add_rule	sys_landlock_add_rule
 446	common	landlock_restrict_self	sys_landlock_restrict_self
 447	common	memfd_secret		sys_memfd_secret
-448	common	process_mrelease	sys_process_mrelease
-449	common	futex_waitv		sys_futex_waitv
+448	common	process_mrelease    sys_process_mrelease
+449	common	futex_waitv	    sys_futex_waitv
 450	common	set_mempolicy_home_node	sys_set_mempolicy_home_node
+451 64  three_start_tracing     sys_three_start_tracing
+452 64  three_stop_tracing      sys_three_stop_tracing
 
+#
 #
 # Due to a historical design error, certain syscalls are numbered differently
 # in x32 as compared to native x86_64.  These syscalls have numbers 512-547.

@@ -101,6 +101,7 @@
 #include <linux/init_syscalls.h>
 #include <linux/stackdepot.h>
 #include <linux/randomize_kstack.h>
+#include <linux/relay.h>  // Tanya's code
 #include <net/net_namespace.h>
 
 #include <asm/io.h>
@@ -113,6 +114,11 @@
 #include <trace/events/initcall.h>
 
 #include <kunit/test.h>
+//Tanya's code 
+#define SUBBUF_SIZE 262144
+#define N_SUBBUFS 4
+struct rchan *threePO_chan = NULL;
+//Tanya's code
 
 static int kernel_init(void *);
 
@@ -1409,6 +1415,14 @@ static void __init do_basic_setup(void)
 	init_irq_proc();
 	do_ctors();
 	do_initcalls();
+	// Tanya's code
+	threePO_chan = relay_open("3PO chan", NULL, SUBBUF_SIZE,
+				  N_SUBBUFS, 1, NULL);
+	if (!threePO_chan)
+		printk("threePO_chan channel creation failed\n");
+	else
+		printk("threePO_chan channel ready\n");
+	// Tanya's code
 }
 
 static void __init do_pre_smp_initcalls(void)

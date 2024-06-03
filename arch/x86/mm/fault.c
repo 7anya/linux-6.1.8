@@ -19,6 +19,7 @@
 #include <linux/uaccess.h>		/* faulthandler_disabled()	*/
 #include <linux/efi.h>			/* efi_crash_gracefully_on_page_fault()*/
 #include <linux/mm_types.h>
+#include <linux/relay.h>        /*relay interface*/
 
 #include <asm/cpufeature.h>		/* boot_cpu_has, ...		*/
 #include <asm/traps.h>			/* dotraplinkage, ...		*/
@@ -36,6 +37,94 @@
 
 #define CREATE_TRACE_POINTS
 #include <asm/trace/exceptions.h>
+
+//Tanya's functions begin
+extern struct rchan *threePO_chan;
+/**
+ * @brief This function marks the 3PO bit in the page table entry
+ * 
+ * @param regs 
+ * @param addr 
+ * @return int 
+ */
+static inline int mark_3PO_bit(struct pt_regs *regs, unsigned long addr)
+{
+	//printk(KERN_INFO "mark_3PO_bit: addr = %lx\n", addr);
+	//printk(KERN_INFO "mark_3PO_bit: regs->ip = %lx\n", regs->ip);
+	//printk(KERN_INFO "mark_3PO_bit: regs->flags = %lx\n", regs->flags);
+	//printk(KERN_INFO "mark_3PO_bit: regs->cs = %lx\n", regs->cs);
+	//printk(KERN_INFO "mark_3PO_bit: regs->ss = %lx\n", regs->ss);
+	//printk(KERN_INFO "mark_3PO_bit: regs->sp = %lx\n", regs->sp);
+	//printk(KERN_INFO "mark_3PO_bit: regs->bp = %lx\n", regs->bp);
+	//printk(KERN_INFO "mark_3PO_bit: regs->ax = %lx\n", regs->ax);
+	//printk(KERN_INFO "mark_3PO_bit: regs->bx = %lx\n", regs->bx);
+	//printk(KERN_INFO "mark_3PO_bit: regs->cx = %lx\n", regs->cx);
+	//printk(KERN_INFO "mark_3PO_bit: regs->dx = %lx\n", regs->dx);
+	//printk(KERN_INFO "mark_3PO_bit: regs->di = %lx\n", regs->di);
+	//printk(KERN_INFO "mark_3PO_bit: regs->si = %lx\n", regs->si);
+	//printk(KERN_INFO "mark_3PO_bit: regs->r8 = %lx\n", regs->r8);
+	//printk(KERN_INFO "mark_3PO_bit: regs->r9 = %lx\n", regs->r9);
+	//printk(KERN_INFO "mark_3PO_bit: regs->r10 = %lx\n", regs->r10);
+	//printk(KERN_INFO "mark_3PO_bit: regs->r11 = %lx\n", regs->r11);
+	//printk(KERN_INFO "mark_3PO_bit: regs->r12 = %lx\n", regs->r12);
+	//printk(KERN_INFO "mark_3PO_bit: regs->r13 = %lx\n", regs->r13);
+	//printk(KERN_INFO "mark_3PO_bit: regs->r14 = %lx\n", regs->r14);
+
+}
+
+/**
+ * @brief Mark the page as not present in the page table entry
+ * 
+ */
+static inline void mark_not_present(struct pt_regs *regs, unsigned long addr){
+	// printk(KERN_INFO "mark_not_present: addr = %lx\n", addr);
+
+	return 0;
+}
+
+/**
+ * @brief On page fault
+ * 
+ */
+static inline void on_page_fault(struct pt_regs *regs, unsigned long addr){
+
+//    // record access to p
+//     if size of microset == MICROSET_SIZE:
+//         // start a new microset
+//         for p’ in microset:
+//             append 𝑝′ to trace
+//             clear present bit for 𝑝'
+//         𝑚𝑖𝑐𝑟𝑜𝑠𝑒𝑡 = { }
+//    add 𝑝 to 𝑚𝑖𝑐𝑟𝑜𝑠𝑒𝑡
+
+//   // resolve page fault
+//     if p’s 3PO bit is set:
+//           // skip normal page-fault handling
+//           set 𝑝’s present bit
+//     else:
+//           // first access to p
+//           set 𝑝’s 3PO bit
+//           run normal page-fault handling
+    return 0;
+}
+
+/**
+ * @brief We log the page fault using a relay buffer
+ * 
+ * @param address 
+ * @return int 
+ */
+int log_page_fault(unsigned long address)
+{
+	if (threePO_chan) {
+		char buf[64];
+		int size = sprintf(buf, "handle_page_fault at address:%ld\n",address);
+		relay_write(threePO_chan, buf, size);
+	}
+	
+	return 0;
+}
+//Tanya's functions end
 
 /*
  * Returns 0 if mmiotrace is disabled, or if the fault is not
@@ -1507,7 +1596,10 @@ static __always_inline void
 handle_page_fault(struct pt_regs *regs, unsigned long error_code,
 			      unsigned long address)
 {	
+	// Tanya's code
 	printk("handle_page_fault at address:%ld\n",address);
+	log_page_fault(address);
+	//Tanya's code 
 	trace_page_fault_entries(regs, error_code, address);
 
 	if (unlikely(kmmio_fault(regs, address)))

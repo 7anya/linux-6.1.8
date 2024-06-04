@@ -47,7 +47,6 @@ bool tracing=false;
 SYSCALL_DEFINE1(three_start_tracing, char *, msg)
 {
   
-  
   char buf[256];
   long copied = strncpy_from_user(buf, msg, sizeof(buf));
   tracing = true ;
